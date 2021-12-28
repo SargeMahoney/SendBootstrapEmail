@@ -1,0 +1,37 @@
+﻿@page "/"
+@using SendBootstrapEmail.EmailServices
+@using System.Text
+@using SendBootstrapEmail.TemplateServices
+
+<PageTitle>Index</PageTitle>
+
+
+Welcome to your Send Email app.
+
+<button type="button" @onclick="SendEmail" ></button>
+
+@code{
+
+    [Inject]
+    public IEmailSender _emailSender { get; set; }
+
+    [Inject]
+    public ITemplateService _tempService { get; set; }
+
+
+    private List<string> myDummyData = new List<string>() { "test1", "test2", "test3" };
+    private List<string> myDummyEmails = new List<string>() { "email1@aaa.com", "email2@aaa.com", "email3@aaa.com" };
+
+
+
+      public async Task SendEmail()
+    {
+
+        //la cartella View non è necessaria in quanto le pagine razor vengono automaticamente cercate li.
+         var templatePath = "EmailTemplates/MyEmailTemplate";
+
+         var testo = await _tempService.GetTemplateHtmlAsStringAsync(templatePath, myDummyData);
+
+         await _emailSender.SendEmailsAsync(myDummyEmails, "My Dummy Data", testo);
+    }
+}
